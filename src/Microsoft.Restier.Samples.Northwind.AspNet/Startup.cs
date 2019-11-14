@@ -1,24 +1,25 @@
 ﻿using System;
+using System.Net;
 using System.Web.Http;
+using System.Web.Http.ExceptionHandling;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Owin;
 using Microsoft.Restier.EntityFramework;
+using Microsoft.Restier.Samples.Northwind.AspNet;
 using Microsoft.Restier.Samples.Northwind.AspNet.Controllers;
 using Microsoft.Restier.Samples.Northwind.AspNet.Data;
+using Owin;
 
+[assembly: OwinStartup(typeof(Startup))]
 namespace Microsoft.Restier.Samples.Northwind.AspNet
 {
-    public static class WebApiConfig
+    public class Startup
     {
-
-        public static void Register(HttpConfiguration config)
+        public void Configuration(IAppBuilder app)
         {
-
-            if (config == null)
-            {
-                throw new ArgumentNullException(nameof(config));
-            }
+            var config = new HttpConfiguration();
 
 #if !PROD
             config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
@@ -40,12 +41,9 @@ namespace Microsoft.Restier.Samples.Northwind.AspNet
                 });
             });
 
-            config.MapHttpAttributeRoutes();
-
             config.MapRestier<NorthwindApi>("ApiV1", "", true);
 
+            app.UseWebApi(config);
         }
-
     }
-
 }

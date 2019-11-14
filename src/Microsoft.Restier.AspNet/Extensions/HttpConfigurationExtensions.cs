@@ -64,13 +64,27 @@ namespace System.Web.Http
         /// <returns></returns>
         public static HttpConfiguration MapRestier<TApi>(this HttpConfiguration config, string routeName, string routePrefix, bool allowBatching = true)
         {
+            return MapRestier<TApi>(config, routeName, routePrefix, allowBatching ? GlobalConfiguration.DefaultServer : null);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TApi"></typeparam>
+        /// <param name="config"></param>
+        /// <param name="routeName"></param>
+        /// <param name="routePrefix"></param>
+        /// <param name="httpServer"></param>
+        /// <returns></returns>
+        public static HttpConfiguration MapRestier<TApi>(this HttpConfiguration config, string routeName, string routePrefix, HttpServer httpServer)
+        {
             ODataBatchHandler batchHandler = null;
             var conventions = CreateRestierRoutingConventions(config, routeName);
 
-            if (allowBatching)
+            if (httpServer != null)
             {
 #pragma warning disable IDE0067 // Dispose objects before losing scope
-                batchHandler = new RestierBatchHandler(GlobalConfiguration.DefaultServer)
+                batchHandler = new RestierBatchHandler(httpServer)
                 {
                     ODataRouteName = routeName
                 };
