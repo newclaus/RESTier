@@ -20,6 +20,7 @@ namespace Microsoft.Restier.Samples.Northwind.AspNet
         public void Configuration(IAppBuilder app)
         {
             var config = new HttpConfiguration();
+            var httpServer = new HttpServer(config); // use http server
 
 #if !PROD
             config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
@@ -41,9 +42,9 @@ namespace Microsoft.Restier.Samples.Northwind.AspNet
                 });
             });
 
-            config.MapRestier<NorthwindApi>("ApiV1", "", true);
+            config.MapRestier<NorthwindApi>("ApiV1", "", httpServer); // use new overload with http server
 
-            app.UseWebApi(config);
+            app.UseWebApi(httpServer); // configure webApi using httpServer
         }
     }
 }
